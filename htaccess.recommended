@@ -1,0 +1,30 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Deny web access to Laravel app code (Apache 2.4)
+<IfModule mod_rewrite.c>
+    RewriteRule ^project/ - [F,L]
+</IfModule>
+
+# PHP 7.4 only — remove if your host uses another PHP selector
+<IfModule mime_module>
+    AddHandler application/x-httpd-ea-php74___lsphp .php .php7 .phtml
+</IfModule>
+
+# IMPORTANT: Remove old "deny from IP" lines — they cause HTTP 500 on Apache 2.4
